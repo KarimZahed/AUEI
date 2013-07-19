@@ -1,21 +1,25 @@
 tic 
 
-UE=zeros(42,3); % Preallocating 42 UEs ( 6 in the cell and others are in the adjacent 6 cells)
+ % Preallocating 42 UEs ( 6 in the cell and others are in the adjacent 6 cells)
 
 
+r=5; %length of hexagon's side
+UE= GeneratePoints(r); % List of UEs 
 
-%UE(:,1:2)=randn(42,2);
+Center= [4*r,3*sqrt(3)*r];% Center of the Central Cell
+Base1=[Center(1)+r/2,Center(2)+sqrt(3)*r]; 
 
-UE
-r=5; 
-std=r/2;
+(UE(1:18,1).^2 +UE(1:18,2).^2).^(  
+
 
 
 hold off
 plot(UE(:,1),UE(:,2),'o')
 hold on 
-plot(4*r,3*sqrt(3)*r,'rx')
+plot(Center(1),Center(2),'rx', Base1(1),Base1(2),'k+')
+
 axis([4 36 4 50])
+
 
 %For distribution of Field Strength
 % E_sigma=5.5; 
