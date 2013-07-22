@@ -1,7 +1,7 @@
 function [ UE ] = GenerateUE(r,Centers,Base)
 %
 
-std=r/2.7;
+std=r/3;
 
 UE=zeros(42,4); % 3rd would hold distance, 4th column would hold E value
 RAND=std.*randn(42,2);
