@@ -1,4 +1,4 @@
-function [ UE ] = GeneratePoints(r,Center)
+function [ UE ] = GenerateUE(r,Center,Base)
 %UNTITLED Summary of this function goes here
 %   Detailed explanation goes here
  
@@ -24,6 +24,16 @@ UE(19:24,2)=Center(2)+-sqrt(3)*r+RAND(19:24,2); %(4)
 UE(25:30,2)=Center(2)+-2*sqrt(3)*r+RAND(25:30,2);  %(5)
 UE(31:36,2)=Center(2)+-sqrt(3)*r+RAND(31:36,2);%(6)
 UE(37:42,2)=Center(2)+sqrt(3)*r+RAND(37:42,2); %(7)
+
+
+% Calculation of Distance of UEs to respective Base Station
+UE(1:18,3)=( ( UE(1:18,1)-Base(1,1) ).^2 +(UE(1:18,2)-Base(1,2) ).^2).^(1/2); % Set 1,2,3 follow Base1
+UE(19:24,3)=( ( UE(19:24,1)-Base(2,1) ).^2 +(UE(19:24,2)-Base(2,2) ).^2).^(1/2); % Set 4 follow Base 2
+UE(25:36,3)=( ( UE(25:36,1)-Base(3,1) ).^2 +(UE(25:36,2)-Base(3,2) ).^2).^(1/2); % Set 5,6 follow Base 3
+UE(37:42,3)=( ( UE(37:42,1)-Base(4,1) ).^2 +(UE(37:42,2)-Base(4,2) ).^2).^(1/2); % Set 5,6 follow Base 3
+
+
+
 
 end
 

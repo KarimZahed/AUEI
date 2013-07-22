@@ -3,26 +3,32 @@ tic
 Center= [0, 0];% Center of the Central Cell
 
 r=5; %length of hexagon's side
-UE= GeneratePoints(r,Center); % List of UEs 
+
+%Base= GenerateBase(Center, r);
+% Calculation of Base Location
+Base(1,1)= Center(1)+r/2;  % Base1 Location
+Base(1,2)= Center(2)+sqrt(3)*r;
+
+Base(2,1)=Center(1)+2*r;
+Base(2,2)=Center(2)-2*sqrt(3)*r;  % Base2 Location
+
+Base(3,1)=Center(1)-r;
+Base(3,2)=Center(2)-2*sqrt(3)*r;  % Base3 Location
+
+Base(4,1)=Center(1)-5*r/2;
+Base(4,2)=Center(2)+sqrt(3)*r;  % Base4 Location
 
 
-Base1=[Center(1)+r/2,Center(2)+sqrt(3)*r];  % Base1 Location
-% Base2=[Center(1)+r/2,Center(2)+sqrt(3)*r];  % Base1 Location
-% Base3=[Center(1)+r/2,Center(2)+sqrt(3)*r];  % Base1 Location
-% Base4=[Center(1)+r/2,Center(2)+sqrt(3)*r];  % Base1 Location
+% Generate the UE location, and calculates Distance to respective Base
+UE= GenerateUE(r,Center,Base); % List of UEs 
 
 
-UE(1:18,3)=( ( UE(1:18,1)-Base1(1) ).^2 +(UE(1:18,2)-Base1(2) ).^2).^(1/2); % Set 1,2,3 follow Base1
-
-
-
-
-hold off
-plot(UE(:,1),UE(:,2),'o')
-hold on 
-plot(Center(1),Center(2),'rx', Base1(1),Base1(2),'k+')
-
-axis([-20 20 -25 25])
+% hold off
+% plot(UE(:,1),UE(:,2),'o')
+% hold on 
+% plot(Center(1),Center(2),'rx', Base(1,1),Base(1,2),'k+',Base(2,1),Base(2,2),'k+',Base(3,1),Base(3,2),'k+',Base(4,1),Base(4,2),'k+')
+% 
+% axis([-15 15 -25 25])
 
 
 %For distribution of Field Strength
