@@ -1,30 +1,27 @@
 function [ UE ] = GenerateUE(r,Centers,Base)
-%
 
-std=r*sqrt(3)/(2*3);
+ UE=zeros(42,5); % 3rd would hold distance,4th would hold angle with station, 5th column would hold E value
 
-UE=zeros(42,5); % 3rd would hold distance,4th would hold angle with station, 5th column would hold E value
-RAND=std.*randn(42,2);
+ 
+ for z=1:7
 
-% X coordinates
-UE(1:6,1)=Centers(1,1)+RAND(1:6,1); % Middle Hexagon (1)
-UE(7:12,1)=Centers(1,1)+RAND(7:12,1); %(2)
-UE(13:18,1)=Centers(1,1)+(3*r/2)+RAND(13:18,1); %(3)
-UE(19:24,1)=Centers(1,1)+(3*r/2)+RAND(19:24,1); %(4)
-UE(25:30,1)=Centers(1,1)+RAND(25:30,1);%(5)
-UE(31:36,1)=Centers(1,1)+(-3*r/2)+RAND(31:36,1);%(6)
-UE(37:42,1)=Centers(1,1)+(-3*r/2)+RAND(37:42,1);%(7)
+x=-r+Centers(z,1)+(2*r).*rand(25,1);
+y=-r+Centers(z,2)+2*r*sqrt(3)/2.*rand(25,1);
 
-% Y coordinates
-UE(1:6,2)=Centers(1,2)+RAND(1:6,2); % Middle Hexagon (1)
-UE(7:12,2)=Centers(1,2)+2*sqrt(3)*r/2+RAND(7:12,2); %(2)
-UE(13:18,2)=Centers(1,2)+sqrt(3)*r/2+RAND(13:18,2); %(3)
-UE(19:24,2)=Centers(1,2)+-sqrt(3)*r/2+RAND(19:24,2); %(4)
-UE(25:30,2)=Centers(1,2)+-2*sqrt(3)*r/2+RAND(25:30,2);  %(5)
-UE(31:36,2)=Centers(1,2)+-sqrt(3)*r/2+RAND(31:36,2);%(6)
-UE(37:42,2)=Centers(1,2)+sqrt(3)*r/2+RAND(37:42,2); %(7)
+i1=find(y>r*sqrt(3)/2+Centers(z,2));
+i2=find(y<-r*sqrt(3)/2+Centers(z,2));
+i3=find(y>-sqrt(3)*(x-Centers(z,1))+sqrt(3)*r +Centers(z,2));
+i4=find(y<sqrt(3)*(x-Centers(z,1)) -sqrt(3)*r +Centers(z,2));
+i5=find(y<-sqrt(3)*(x-Centers(z,1))-sqrt(3)*r +Centers(z,2));
+i6=find(y>sqrt(3)*(x-Centers(z,1)) +sqrt(3)*r +Centers(z,2));
 
-
+ i=[i1;i2;i3;i4;i5;i6 ];
+ x(i)=[];
+ y(i)=[];
+ 
+UE((6*(z-1)+1:6*(z-1)+6),1:2)=[x(1:6),y(1:6)]; 
+end   
+  
 % Distance between UEs and respective Base Station
 UE(1:18,3)=( ( UE(1:18,1)-Base(1,1) ).^2 +(UE(1:18,2)-Base(1,2) ).^2).^(1/2); % Set 1,2,3 follow Base1
 UE(19:24,3)=( ( UE(19:24,1)-Base(2,1) ).^2 +(UE(19:24,2)-Base(2,2) ).^2).^(1/2); % Set 4 follow Base 2
