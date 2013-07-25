@@ -1,15 +1,14 @@
-function [ UE ] = GenerateAngle( UE, Base, Centers )
+function [ UE ] = CalculateAngle( UE, Base, Centers )
 
-  
-%for the first 3 cells
+%Find vector for the first 3 cells that share Base1
 UEv(1:18,1)=UE(1:18,1) -Base(1,1);
 UEv(1:18,2)=UE(1:18,2)-Base(1,2) ; 
 
-%for those in the central cell
+% Reference vector from Center to Base for central cell 
 Ref1(1:6,1)=Centers(1,1)-Base(1,1);
 Ref1(1:6,2)=Centers(1,2)-Base(1,2);
 
-%For those in the second cell
+% Reference for those in the second cell
 Ref1(7:12,1)=Centers(2,1)-Base(1,1);
 Ref1(7:12,2)=Centers(2,2)-Base(1,2);
 
@@ -44,13 +43,14 @@ Ref1(37:42,1)=Centers(7,1)-Base(4,1);
 Ref1(37:42,2)=Centers(7,2)-Base(4,2);
 
 %% Calculation of Vector Magnitudes and dot products
-normU(1:42)=( ( UEv(1:42,1)).^2 +(UEv(1:42,2).^2)).^(1/2);
+normU(1:42)=( ( UEv(1:42,1)).^2 +(UEv(1:42,2).^2)).^(1/2); 
 norm1(1:42)=( ( Ref1(1:42,1)).^2 +(Ref1(1:42,2).^2)).^(1/2);
- 
+
+%Dot product for each UE
 dotp(1:42)=UEv(1:42,1).*Ref1(1:42,1)+UEv(1:42,2).*Ref1(1:42,2);
 
-UE(1:42,4)= acos(dotp(1:42)./(normU.*norm1)) *180/pi;
-
+% Angle=acos(A.B/|A|.|B|)
+UE(1:42,4)= acos(dotp(1:42)./(normU.*norm1)) *180/pi; 
 
 end
 
