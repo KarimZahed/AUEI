@@ -1,4 +1,4 @@
-function [ E,L_b] = E_predict(PathType,freq,dist,T_perc,h1,ha,heff,h2,R1,R2,environment,theta,theta_eff, AdjToSea, RecOnLand )
+function [ L_b, E] = E_predict(PathType,freq,dist,T_perc,h1,ha,heff,h2,R1,R2,environment,theta,theta_eff, AdjToSea, RecOnLand )
 %Customized version ot predict_f to be used in the Monte Carlo Simulations.
 %function [ E,MFS ,TCA_correction,Ets ] = predict_f(PathType,freq,dist,T_perc,h1,ha,heff,h2,R1,R2,environment,theta,theta_eff )
 %Updated on the basis of Draft REvision of Recommendation ITU-R2 P.1546-4
@@ -7,12 +7,12 @@ Flag_E=0;% flag indicator showing that we have already calculated the field stre
 TCA_correction=0;
 %% effective distance between the two antennas
 %height_diff=(abs(h1-h2))/1000;
-%eff_dist=sqrt(height_diff^2+ dist^2); % new effective distance
+%eff_dist=sqrt(height_diff.^2+ dist.^2); % new effective distance
 eff_dist=dist;
 
 %% Saving the old value of dist as it will be set to 1 if 0.04<dist<1
   dist_old=dist;
-  if dist <1 && dist >0.04 
+  if dist <1 & dist >0.04 
      dist=1;
   end    
 %% Step 0
@@ -35,7 +35,7 @@ dist_tab=[1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16 17 18 19 20 25 30 35 40 45 50 5
 		dist_max=1;
     end    
     for i=1:length(dist_tab)-1
-            if dist>=dist_tab(i) && dist<dist_tab(i+1)
+            if dist>=dist_tab(i) & dist<dist_tab(i+1)
                 dist_min=dist_tab(i);
                 dist_max=dist_tab(i+1);
             end
@@ -48,7 +48,7 @@ if strcmpi(PathType,'land') % Antenna height cases for Land Path
 	 %Annex 5 Section 3.1.1
 	 if dist<=3
 		 h1=ha;
-	 elseif dist>3 &&dist<15
+	 elseif dist>3 &dist<15
 		 h1=ha+((heff-ha)*(dist -3)/12);
 	 elseif dist>=15
 		 h1=heff;
@@ -121,7 +121,7 @@ if strcmpi(PathType,'land') % Antenna height cases for Land Path
                 end
 		 Flag_E=1;   		 
     %% height between 0 and 10 meters
-	  elseif h1<10 && h1>=0
+	  elseif h1<10 & h1>=0
 			% finding E10 and E20
 			i=dist_tab==dist_min;
 			E10=M(i,1);
@@ -195,7 +195,7 @@ else %% Otherwise it is a Sea Path
         if dist <= Dh1
             E=106.9-20*log10(dist)+2.38*(1-exp(-dist/8.94))*log10(50/T_perc); % Annex 5 Section 2, E=Emax=Ese+Efs (1b)
             Flag_E=1;
-        elseif (Dh1<dist) && (dist<D20)
+        elseif (Dh1<dist) & (dist<D20)
             EDh1=106.9-20*log10(Dh1)+2.38*(1-exp(-Dh1/8.94))*log10(50/T_perc);
             i=dist_tab==D20;
             ED20=M(i,1)+(M(i,2)-M(i,1))*log10(h1/10)/log10(20/10);
@@ -290,12 +290,12 @@ if Flag_E==0
     %% Step 8.1 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%   
 % Antenna height borders 
 h1_tab=[10 20 37.5 75 150 300 600 1200];
-        if h1>1200 && h1<3000 %extrapolation over 1200 meters
+        if h1>1200 & h1<3000 %extrapolation over 1200 meters
             h1_max=1200;
             h1_min=600;
         else
             for i=1:length(h1_tab)-1
-                if h1>=h1_tab(i) && h1<h1_tab(i+1)
+                if h1>=h1_tab(i) & h1<h1_tab(i+1)
                     h1_min=h1_tab(i);
                     h1_max=h1_tab(i+1);
                 end
@@ -309,7 +309,7 @@ h1_tab=[10 20 37.5 75 150 300 600 1200];
 		E_inf=M(i,j);
 		E=E_inf;
 		 %check for need of interpolation for distance
-		  if dist~= dist_min && h1==h1_min
+		  if dist~= dist_min & h1==h1_min
 			i=dist_tab==dist_max;
 			E_sup=M(i,j);
 			%application of interpolation method annexe 5 paragraphe 5
@@ -326,7 +326,7 @@ h1_tab=[10 20 37.5 75 150 300 600 1200];
 			E_height=E;
 		 end  
 		% double interpolation method
-	   if dist~= dist_min && h1~=h1_min
+	   if dist~= dist_min & h1~=h1_min
 		   ii=dist_tab==dist_max;
 		   jj=h1_tab==h1_max;
 		   E_h1_d=M(i,j)+(M(ii,j)-M(i,j))*log10(dist/dist_min)/log10(dist_max/dist_min);
@@ -352,7 +352,7 @@ h1_tab=[10 20 37.5 75 150 300 600 1200];
             E_inf=M(i,j);
             E=E_inf;
              %check for need of interpolation for distance
-              if dist~= dist_min && h1==h1_min
+              if dist~= dist_min & h1==h1_min
                 i=dist_tab==dist_max;
                 E_sup=M(i,j);
                 %application of interpolation method annexe 5 paragraphe 5
@@ -369,7 +369,7 @@ h1_tab=[10 20 37.5 75 150 300 600 1200];
 
              end  
             % double interpolation method
-            if dist~= dist_min && h1~=h1_min
+            if dist~= dist_min & h1~=h1_min
                ii=dist_tab==dist_max;
                jj=h1_tab==h1_max;
                E_h1_d=M(i,j)+(M(ii,j)-M(i,j))*log10(dist/dist_min)/log10(dist_max/dist_min);
@@ -410,7 +410,7 @@ h1_tab=[10 20 37.5 75 150 300 600 1200];
                 E_inf=M(i,j);
                 E=E_inf;
              %check for need of interpolation for distance
-              if dist~= dist_min && h1==h1_min
+              if dist~= dist_min & h1==h1_min
                 i=dist_tab==dist_max;
                 E_sup=M(i,j);
                 %application of interpolation method annexe 5 paragraphe 5
@@ -426,7 +426,7 @@ h1_tab=[10 20 37.5 75 150 300 600 1200];
 
              end  
             % double interpolation method
-            if dist~= dist_min && h1~=h1_min
+            if dist~= dist_min & h1~=h1_min
                ii=dist_tab==dist_max;
                jj=h1_tab==h1_max;
                E_h1_d=M(i,j)+(M(ii,j)-M(i,j))*log10(dist/dist_min)/log10(dist_max/dist_min);
@@ -454,7 +454,7 @@ h1_tab=[10 20 37.5 75 150 300 600 1200];
                 E_inf=M(i,j);
                 E=E_inf;
              %check for need of interpolation for distance
-              if dist~= dist_min && h1==h1_min
+              if dist~= dist_min & h1==h1_min
                 i=dist_tab==dist_max;
                 E_sup=M(i,j);
                 %application of interpolation method annexe 5 paragraphe 5
@@ -470,7 +470,7 @@ h1_tab=[10 20 37.5 75 150 300 600 1200];
 
              end  
                 % double interpolation method
-               if dist~= dist_min && h1~=h1_min
+               if dist~= dist_min & h1~=h1_min
                    ii=dist_tab==dist_max;
                    jj=h1_tab==h1_max;
                    E_h1_d=M(i,j)+(M(ii,j)-M(i,j))*log10(dist/dist_min)/log10(dist_max/dist_min);
@@ -498,6 +498,7 @@ h1_tab=[10 20 37.5 75 150 300 600 1200];
     end
     
 end 
+E
 %% STEP 12 as ordered Annex 6 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% --
 % Terrain clearance angle correction as described in Annex 5, Section 11
 	%Theta_TCA is considered as the same variable Theta
@@ -528,7 +529,7 @@ end
     end
 %% Step 16  -  Slope Path Correction ( Antenna Height Diff) -- Should use old distance ?
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-d_slope=sqrt(dist^2+(10^(-6))*(ha-h2)^2); 
+d_slope=sqrt(dist.^2+(10.^(-6))*(ha-h2).^2); 
 AHD_correction= 20*log10(dist/d_slope);	% Annex 5, Section 14 
 E=E+AHD_correction;
 
@@ -536,15 +537,15 @@ end    %End of distance >=1km condition
 
 %% Step 17 
   if dist<=0.04    
-    d_slope=sqrt(dist^2+(10^(-6))*(ha-h2)^2); 
+    d_slope=sqrt(dist.^2+(10.^(-6))*(ha-h2).^2); 
     E=106.9-20*log10(d_slope); %d_slope is calculated at the top
     
- elseif  dist_old<1 && dist_old>0.04
+ elseif  dist_old<1 & dist_old>0.04
     dist=dist_old ;
-    d_slope=sqrt(dist^2+(10^(-6))*(ha-h2)^2); % Recalculating the slope for the old value of distance so as not to have similar 
+    d_slope=sqrt(dist.^2+(10.^(-6))*(ha-h2).^2); % Recalculating the slope for the old value of distance so as not to have similar 
     
-    d_inf=sqrt((0.04)^2+(10^(-6))*(ha-h2)^2); %d_inf = d_slope(0.04) where dist=0.04
-    d_sup=sqrt((1)^2+(10^(-6))*(ha-h2)^2);
+    d_inf=sqrt((0.04).^2+(10.^(-6))*(ha-h2).^2); %d_inf = d_slope(0.04) where dist=0.04
+    d_sup=sqrt((1).^2+(10.^(-6))*(ha-h2).^2);
 
     E_inf=106.9-20*log10(d_inf);
     E_sup=E; % E is for dist=1 in steps 1 to 14 (as wriitten in section 15)
@@ -553,7 +554,7 @@ end    %End of distance >=1km condition
 
 %% Step 18
 %Location variability in land area-coverage prediction  Annex 5, Section 12
-% if dist_old>1 &&  (strcmpi(PathType,'land')) % values below are from the table in section 12
+% if dist_old>1 &  (strcmpi(PathType,'land')) % values below are from the table in section 12
 % Q=[2.327 2.054 1.881 1.751 1.645 1.555 1.476 1.405 1.341 1.282 1.227 1.175 1.126 1.080 1.036 0.994 0.954 0.915 0.878 0.841 0.806 0.772 0.739 0.706 0.674 0.643 0.612 0.582 0.553 0.524 0.495 0.467 0.439 0.412 0.385 0.358 0.331 0.305 0.279 0.253 0.227 0.202 0.176 0.151 0.125 0.100 0.075 0.050 0.025 0.000 -0.025 -0.050 -0.075 -0.100 -0.125 -0.151 -0.176 -0.202 -0.227 -0.253 -0.279 -0.305 -0.331 -0.358 -0.385 -0.412 -0.439 -0.467 -0.495 -0.524 -0.553 -0.582 -0.612 -0.643 -0.674 -0.706 -0.739 -0.772 -0.806 -0.841 -0.878 -0.915 -0.954 -0.994 -1.036 -1.080 -1.126 -1.175 -1.227 -1.282 -1.341 -1.405 -1.476 -1.555 -1.645 -1.751 -1.881 -2.054 -2.327];     
 % sigma=5.5;% As found in the old code, but should be updated accoring to a K value
 % %for 50% Location variability Q(50)=zero;
@@ -567,12 +568,12 @@ end    %End of distance >=1km condition
     if E>106.9-20*log10(eff_dist)
          E=106.9-20*log10(eff_dist);
     end 
-    MFS=106.9-20*log10(eff_dist);
+%     MFS=106.9-20*log10(eff_dist);
  else 
     if E>106.9-20*log10(eff_dist)+2.38*(1-exp(-eff_dist/8.94))*log10(50/T_perc)
          E=106.9-20*log10(eff_dist)+2.38*(1-exp(-eff_dist/8.94))*log10(50/T_perc);
     end
-    MFS=106.9-20*log10(eff_dist)+2.38*(1-exp(-eff_dist/8.94))*log10(50/T_perc);
+%     MFS=106.9-20*log10(eff_dist)+2.38*(1-exp(-eff_dist/8.94))*log10(50/T_perc);
  end 
 
 %% Calculate Losses at Step 20
