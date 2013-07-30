@@ -7,7 +7,7 @@ UEv(1:18,2)=UE(1:18,2)-Base(1,2) ;
 % Reference vector from Center to Base for central cell 
 Ref1(1:6,1)=Centers(1,1)-Base(1,1);
 Ref1(1:6,2)=Centers(1,2)-Base(1,2);
-
+    
 % Reference for those in the second cell
 Ref1(7:12,1)=Centers(2,1)-Base(1,1);
 Ref1(7:12,2)=Centers(2,2)-Base(1,2);
@@ -42,9 +42,8 @@ UEv(37:42,2)=UE(37:42,2)- Base(4,2);
 Ref1(37:42,1)=Centers(7,1)-Base(4,1);
 Ref1(37:42,2)=Centers(7,2)-Base(4,2);
 
-
 %% Horizontal angle between UEs and their base stations
-% Calculation of Vector Magnitudes and dot products
+%Calculation of Vector Magnitudes and dot products
 normU(1:42)=( ( UEv(1:42,1)).^2 +(UEv(1:42,2).^2)).^(1/2); 
 norm1(1:42)=( ( Ref1(1:42,1)).^2 +(Ref1(1:42,2).^2)).^(1/2);
 
@@ -56,19 +55,20 @@ UE(1:42,5)= acos(dotp(1:42)./(normU.*norm1)) *180/pi;
 
 %% Horizontal angle between DTT and the 42 UEs
 % What is the orientation of  DTT ( towards the base ?)
-DTT_Ref(1:42,1)=DTT_xy(1)-Base(1,1); 
-DTT_Ref(1:42,2)=DTT_xy(2)-Base(1,2);
+DTT_Ref(1:42,1)=Base(1,1)-DTT_xy(1); 
+DTT_Ref(1:42,2)=Base(1,2)-DTT_xy(2);
 
-DTTv(1:42,1)=DTT_xy(1)-UE(:,1);
-DTTv(1:42,2)=DTT_xy(1)-UE(:,2); 
+DTTv(1:42,1)=UE(:,1)-DTT_xy(1);
+DTTv(1:42,2)=UE(:,2)-DTT_xy(2); 
 
 normU(1:42)=( ( DTTv(1:42,1)).^2 +(DTTv(1:42,2).^2)).^(1/2); 
 norm1(1:42)=( ( DTT_Ref(1:42,1)).^2 +(DTT_Ref(1:42,2).^2)).^(1/2);
 dotp(1:42)=DTTv(1:42,1).*DTT_Ref(1:42,1)+DTTv(1:42,2).*DTT_Ref(1:42,2);
 
 UE(1:42,6)= acos(dotp(1:42)./(normU.*norm1)) *180/pi;
-
+    
 %% vertical angle between UE transmitter and BS receiver
 UE(1:42,7) = atan(height_diff./UE(1:42,3))*180/pi; 
+
 end
 
