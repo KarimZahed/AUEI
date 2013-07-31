@@ -1,4 +1,4 @@
-function [ UE ] = CalculateAngle( UE, Base, Centers, DTT_UH_h_diff ,DTT_xy)
+function [ UE ] = CalculateAngle( UE, Base, Centers, height_diff ,DTT_xy)
 
 % %Find vector for the first 3 cells that share Base1
 % UEv(1:18,1)=UE(1:18,1) -Base(1,1);
@@ -53,7 +53,7 @@ function [ UE ] = CalculateAngle( UE, Base, Centers, DTT_UH_h_diff ,DTT_xy)
 % % Angle=acos(A.B/|A|.|B|),
 % UE(1:42,5)= acos(dotp(1:42)./(normU.*norm1)) *180/pi; 
 
-%% Horizontal angle between DTT and each UE
+%% Horizontal angle between DTT and the 42 UEs
 % Orientation of  DTT is towards the base 
 DTT_Ref(1:42,1)=Base(1,1)-DTT_xy(1); 
 DTT_Ref(1:42,2)=Base(1,2)-DTT_xy(2);
@@ -68,7 +68,7 @@ dotp(1:42)=DTTv(1:42,1).*DTT_Ref(1:42,1)+DTTv(1:42,2).*DTT_Ref(1:42,2);
 UE(1:42,5)= acos(dotp(1:42)./(normU.*norm1)) *180/pi;
 %% Vertical Angle between DTT and each UE     
 dist_DTT_UE=((DTT_xy(1)-UE(:,1)).^2  +(DTT_xy(2)-UE(:,2)).^2).^(1/2);
-UE(1:42,6)= atan((DTT_UH_h_diff)./dist_DTT_UE(1:42))*180/pi; 
+UE(1:42,6)= atan((DTT_h-UE_h)./dist_DTT_UE(1:42))*180/pi; 
     
 %% vertical angle between UE transmitter and BS receiver
 % UE(1:42,7) = atan(height_diff./UE(1:42,3))*180/pi; 

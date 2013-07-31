@@ -1,18 +1,20 @@
-function [ L_b, E] = E_predict(PathType,freq,dist,T_perc,h1,ha,heff,h2,R1,R2,environment,theta,theta_eff, AdjToSea, RecOnLand )
+function [ L_b,E] =E_predict(PathType,freq,dist,T_perc,h1,ha,heff,h2,R1,R2,environment,theta,theta_eff, AdjToSea, RecOnLand )
 %Customized version ot predict_f to be used in the Monte Carlo Simulations.
 %function [ E,MFS ,TCA_correction,Ets ] = predict_f(PathType,freq,dist,T_perc,h1,ha,heff,h2,R1,R2,environment,theta,theta_eff )
 %Updated on the basis of Draft REvision of Recommendation ITU-R2 P.1546-4
 %This code is applicable only to 50% location variability 
 Flag_E=0;% flag indicator showing that we have already calculated the field strength
 TCA_correction=0;
-%% effective distance between the two antennas
+Fs=0;
+%% effective distance between the two antennas no longer in use as before
 %height_diff=(abs(h1-h2))/1000;
-%eff_dist=sqrt(height_diff.^2+ dist.^2); % new effective distance
+%eff_dist=sqrt(height_diff^2+ dist^2); % new effective distance
 
 %% Saving the old value of dist as it will be set to 1 if 0.04<dist<1
   dist_old=dist;
-  
-
+  if dist <1 && dist >0.04 
+     dist=1;
+  end    
 %% Step 0
 if dist>=1 %(Steps 1-16 should be done as instructed in Step 0 considering the distance conditions
     
@@ -51,10 +53,9 @@ if strcmpi(PathType,'land') % Antenna height cases for Land Path
 	 elseif dist>=15
 		 h1=heff;
      end
-     
 %% Step 8
      % h1<10 meters :
- % Step 8.2 Since h1 <10,  Sections 4.2 (land) && 4.3 (sea) 
+ % Step 8.2 Since h1 <10,  Sections 4.2 (land) & 4.3 (sea) 
 	  if h1<0 % negative values of h1 
 		  
 		   % finding E10 and E20
@@ -67,28 +68,16 @@ if strcmpi(PathType,'land') % Antenna height cases for Land Path
 
 			%interpolation for distance
 				if dist~=dist_min
-					E_inf=E;
-					i=dist_tab==dist_max;
-					E10sup=M(i,1);
-					E20sup=M(i,2);
-					C1020sup=E10sup-E20sup;%correction
-					%correction C_h1neg10
-					E_zero=E10sup+0.5*(C1020sup+C_h1_0);
-					% Correction C_h1real
-					E_sup=E_zero+C_h1real;
-					%application of interpolation method annexe 5 paragraphe 5
-					E=E_inf+(E_sup -E_inf)*log10(dist/dist_min)/log10(dist_max/dist_min);
+                    E=InterpolateD(E,M,i,C_h1_0,C_h1real,dist,dist_min,dist_max,h1,PathType,Fs);
 				end
 				Efmin=E;
-				
-						
+								
 			%frequency interpolation
 			if freq~=freq_min
 				% search of the correspondant matrix in the case when freq ~= min -> cond=2
 				M=CorrespondentMatrix(freq_min , freq_max, T_perc_min,T_perc_max, PathType, 2);
 				
 				% finding E10 and E20
-				i=dist_tab==dist_min;
 				E10=M(i,1);
 				E20=M(i,2);
 				C1020=E10-E20;%correction
@@ -96,17 +85,7 @@ if strcmpi(PathType,'land') % Antenna height cases for Land Path
                 [E, C_h1_0, C_h1real] = TAHfield(E10,h1,freq_max,C1020);	              
 
 				if dist~=dist_min
-                    E_inf=E;
-                    i=dist_tab==dist_max;
-                    E10sup=M(i,1);
-                    E20sup=M(i,2);
-                     C1020sup=E10sup-E20sup;%correction
-                    %correction C_h1neg10
-                    E_zero=E10sup+0.5*(C1020sup+C_h1_0);
-                    % Correction C_h1real
-                    E_sup=E_zero+C_h1real;
-                    %application of interpolation method annexe 5 paragraphe 5
-                    E=E_inf+(E_sup -E_inf)*log10(dist/dist_min)/log10(dist_max/dist_min);
+                     E=InterpolateD(E,M,i,C_h1_0,C_h1real,dist,dist_min,dist_max,h1,PathType,Fs);
                 end
                  Efmax=E;
                  %interpolation of frequency using method annexe 5 paragraphe 6:
@@ -124,24 +103,14 @@ if strcmpi(PathType,'land') % Antenna height cases for Land Path
 			i=dist_tab==dist_min;
 			E10=M(i,1);
 			E20=M(i,2);
-			
-					C1020=E10-E20;%correction
-                    [E,C_h1neg10,C_h1real]=TAHfield(E10,h1,freq_max,C1020);
-
-					%interpolation for distance
-				if dist~=dist_min
-					E_inf=E;
-					i=dist_tab==dist_max;
-					E10sup=M(i,1);
-					E20sup=M(i,2);
-					C1020sup=E10sup-E20sup;%correction
-					%correction C_h1neg10
-					E_zero=E10sup+0.5*(C1020sup+C_h1neg10);
-					% Correction C_h1real
-					E_sup=E_zero+0.1*h1*(E10sup-E_zero);
-					%application of interpolation method annexe 5 paragraphe 5
-					E=E_inf+(E_sup -E_inf)*log10(dist/dist_min)/log10(dist_max/dist_min);
-                end			
+			C1020=E10-E20;%correction
+             
+            [E,C_h1neg10,C_h1real]=TAHfield(E10,h1,freq_max,C1020);
+		
+				if dist~=dist_min %interpolation for distance		 
+					 E=InterpolateD(E,M,i,C_h1neg10,C_h1real,dist,dist_min,dist_max,h1,PathType,Fs);
+                end		
+                
 			Efmin=E;
 					
 			if freq~=freq_min
@@ -149,7 +118,6 @@ if strcmpi(PathType,'land') % Antenna height cases for Land Path
 				M=CorrespondentMatrix(freq_min , freq_max, T_perc_min,T_perc_max, PathType, 2);
 				
 				% finding E10 and E20
-				i=dist_tab==dist_min;
 				E10=M(i,1);
 				E20=M(i,2);
 			  
@@ -158,17 +126,7 @@ if strcmpi(PathType,'land') % Antenna height cases for Land Path
 							
 			%interpolation for distance							
 				if dist~=dist_min
-					E_inf=E;
-					i=dist_tab==dist_max;
-					E10sup=M(i,1);
-					E20sup=M(i,2);
-					C1020sup=E10sup-E20sup;%correction
-					%correction C_h1neg10
-					E_zero=E10sup+0.5*(C1020sup+C_h1neg10);
-					% Correction C_h1real
-					E_sup=E_zero+0.1*h1*(E10sup-E_zero);
-					%application of interpolation method annexe 5 paragraphe 5
-					E=E_inf+(E_sup -E_inf)*log10(dist/dist_min)/log10(dist_max/dist_min);
+					 E=InterpolateD(E,M,i,C_h1neg10,C_h1real,dist,dist_min,dist_max,h1,PathType,Fs);
 				end
 						
 				Efmax=E;
@@ -213,30 +171,13 @@ else %% Otherwise it is a Sea Path
             
             E=Eprime*(1-Fs)+Eseconde*Fs;    %(11c)
             
-            
             if dist~=dist_min
-               
-                E_inf=E;
-                i=dist_tab==dist_max;
-                Eprime=M(i,1)+(M(i,2)-M(i,1))*log10(h1/10)/log10(20/10);
-                E10sup=M(i,1);
-                E20sup=M(i,2);
-                C1020sup=E10sup-E20sup;%correction
-             
-                E_zero=E10sup+0.5*(C1020sup+C_h1neg10);
-                Eseconde=E_zero+0.1*h1*(E10sup-E_zero);
-
-                Fs=(dist-D20)/dist;
-
-                E_sup=Eprime*(1-Fs)+Eseconde*Fs;
-                %application of interpolation method annexe 5 Section 5
-                E=E_inf+(E_sup -E_inf)*log10(dist/dist_min)/log10(dist_max/dist_min);
-                
+                E  = InterpolateD(E,M,i,C_h1neg10,C_h1real,dist,dist_min,dist_max,h1,PathType,Fs );  
             end
+            
             Efmin=E;
            
             if freq ~=freq_min
-                i=dist_tab==dist_min;
                 Eprime=M(i,1)+(M(i,2)-M(i,1))*log10(h1/10)/log10(20/10);
                 E10=M(i,1);
                 E20=M(i,2);
@@ -249,30 +190,14 @@ else %% Otherwise it is a Sea Path
                 E=Eprime*(1-Fs)+Eseconde*Fs;
 					
                 if dist~=dist_min
-
-                    E_inf=E;
-                    i=dist_tab==dist_max;
-                    Eprime=M(i,1)+(M(i,2)-M(i,1))*log10(h1/10)/log10(20/10);
-                    E10sup=M(i,1);
-                    E20sup=M(i,2);
-                    C1020sup=E10sup-E20sup;%correction
-
-                    E_zero=E10sup+0.5*(C1020sup+C_h1neg10);
-                    Eseconde=E_zero+0.1*h1*(E10sup-E_zero);
-
-                    Fs=(dist-D20)/dist;
-
-                    E_sup=Eprime*(1-Fs)+Eseconde*Fs;
-                    %application of interpolation method annexe 5 paragraphe 5
-                    E=E_inf+(E_sup -E_inf)*log10(dist/dist_min)/log10(dist_max/dist_min);
-                    
+                    E  = InterpolateD(E,M,i,C_h1neg10,C_h1real,dist,dist_min,dist_max,h1,PathType,Fs );  
                 end
                 Efmax=E;
                 %interpolation of frequency using method annexe 5 paragraphe 6:
             E=Efmin+(Efmax-Efmin)*log10(freq/freq_min)/log10(freq_max/freq_min);
             % Maximum field strength for Sea condition 
             if E>106.9-20*log10(dist)+2.38*(1-exp(-dist/8.94))*log10(50/T_perc)
-         E=106.9-20*log10(dist)+2.38*(1-exp(-dist/8.94))*log10(50/T_perc);
+                  E=106.9-20*log10(dist)+2.38*(1-exp(-dist/8.94))*log10(50/T_perc);
              end
             Flag_E=1;
             end
@@ -496,7 +421,6 @@ h1_tab=[10 20 37.5 75 150 300 600 1200];
     end
     
 end 
-
 %% STEP 12 as ordered Annex 6 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% --
 % Terrain clearance angle correction as described in Annex 5, Section 11
 	%Theta_TCA is considered as the same variable Theta
@@ -527,7 +451,7 @@ end
     end
 %% Step 16  -  Slope Path Correction ( Antenna Height Diff) -- Should use old distance ?
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-d_slope=sqrt(dist.^2+(10.^(-6))*(ha-h2).^2); 
+d_slope=sqrt(dist^2+(10^(-6))*(ha-h2)^2); 
 AHD_correction= 20*log10(dist/d_slope);	% Annex 5, Section 14 
 E=E+AHD_correction;
 
@@ -535,22 +459,20 @@ end    %End of distance >=1km condition
 
 %% Step 17 
   if dist<=0.04    
-      d_slope=sqrt(dist.^2+(10.^(-6))*(ha-h2).^2); 
+    d_slope=sqrt(dist^2+(10^(-6))*(ha-h2)^2); 
     E=106.9-20*log10(d_slope); %d_slope is calculated at the top
     
  elseif  dist_old<1 && dist_old>0.04
     dist=dist_old ;
-    d_slope=sqrt(dist.^2+(10.^(-6))*(ha-h2).^2); % Recalculating the slope for the old value of distance so as not to have similar 
+    d_slope=sqrt(dist^2+(10^(-6))*(ha-h2)^2); % Recalculating the slope for the old value of distance so as not to have similar 
     
-    d_inf=sqrt((0.04).^2+(10.^(-6))*(ha-h2).^2); %d_inf = d_slope(0.04) where dist=0.04
-    d_sup=sqrt((1).^2+(10.^(-6))*(ha-h2).^2);
+    d_inf=sqrt((0.04)^2+(10^(-6))*(ha-h2)^2); %d_inf = d_slope(0.04) where dist=0.04
+    d_sup=sqrt((1)^2+(10^(-6))*(ha-h2)^2);
 
     E_inf=106.9-20*log10(d_inf);
     E_sup=E; % E is for dist=1 in steps 1 to 14 (as wriitten in section 15)
     E=E_inf+(E_sup-E_inf)*log10(d_slope/d_inf)/log10(d_sup/d_inf);
-  end
-
-
+ end 
 
 %% Step 18
 %Location variability in land area-coverage prediction  Annex 5, Section 12
@@ -564,17 +486,14 @@ end    %End of distance >=1km condition
 
 %% Step 19 Maximum Field Strength 
 %[E,Em]=MFS(PathType, dist, T_perc)  %% 8.1.6 , 9 , 19
-
  if (strcmpi(PathType,'land')) 
     if E>106.9-20*log10(dist)
          E=106.9-20*log10(dist);
     end 
-%     MFS=106.9-20*log10(dist);
  else 
     if E>106.9-20*log10(dist)+2.38*(1-exp(-dist/8.94))*log10(50/T_perc)
          E=106.9-20*log10(dist)+2.38*(1-exp(-dist/8.94))*log10(50/T_perc);
     end
-%     MFS=106.9-20*log10(dist)+2.38*(1-exp(-dist/8.94))*log10(50/T_perc);
  end 
 
 %% Calculate Losses at Step 20

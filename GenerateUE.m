@@ -1,8 +1,6 @@
 function [ UE ] = GenerateUE(r,Centers,Base,DTT_xy)
 
-UE=zeros(42,5); % 3rd would hold distance,4th would hold distance to DTT , 5th holds anngle with station,
-
-%r=1/2; In the standard case 
+UE=zeros(42,5); % 3rd would hold distance to respective BS,4th would hold distance to DTT , 5th holds anngle with station,
 
 for z=1:7 % for each of the 7 hexagons
 
