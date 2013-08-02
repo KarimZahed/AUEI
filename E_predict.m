@@ -10,8 +10,10 @@ TCA_correction=0;
 %eff_dist=sqrt(height_diff.^2+ dist.^2); % new effective distance
 
 %% Saving the old value of dist as it will be set to 1 if 0.04<dist<1
-  dist_old=dist;
-  
+dist_old=dist;
+ if dist <1 && dist >0.04 
+     dist=1;
+  end     
 
 %% Step 0
 if dist>=1 %(Steps 1-16 should be done as instructed in Step 0 considering the distance conditions
