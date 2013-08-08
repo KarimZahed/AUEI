@@ -75,7 +75,7 @@ hold on % Draws the Borders
 plot(Borders(:,1,1),Borders(:,2,1),'r',Borders(:,1,2),Borders(:,2,2),'r',Borders(:,1,3),Borders(:,2,3),'r',Borders(:,1,4),Borders(:,2,4),'r',Borders(:,1,5),Borders(:,2,5),'r',Borders(:,1,6),Borders(:,2,6),'r',Borders(:,1,7),Borders(:,2,7),'r')
 
 % rp=3*(r)
- axis([(-3*r+0.5), 3*r+0.5 ,-3*r, 3*r  ])
+ axis([(-3*r+0.5), 3*r+0.5 ,-3*r, 3*r ])
 legend('UE','Centers','Base Stations','Borders')
 
 toc
