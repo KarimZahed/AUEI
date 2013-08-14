@@ -1,4 +1,4 @@
-function [ Centers, Borders, Base ] = Initiate( r ,BS_h)
+function [ Centers, Borders, Base ] = Initiate( r )
 
 %Creates Centers
 Centers= [r,0 ; -r/2,-sqrt(3)*r/2; -r/2, r*sqrt(3)/2; r,2*sqrt(3)*r/2  ; 5*r/2,sqrt(3)*r/2 ; 5*r/2,-sqrt(3)*r/2 ; r,-2*sqrt(3)*r/2   ];
@@ -38,6 +38,5 @@ Base(3,2)=Centers(1,2);  % Base3 Location
 Base(4,1)=Centers(1,1)+r/2;
 Base(4,2)=Centers(1,2)-3*sqrt(3)*r/2;  % Base4 Location
 
-Base(1:4,3)=BS_h;
 end
 

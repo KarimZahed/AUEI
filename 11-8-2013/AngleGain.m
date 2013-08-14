@@ -1,6 +1,4 @@
 function [ Gref ] = AngleGain( phi, theta)
-% Returns a positive Gain accounting for the angle from maximum gain.
-
 % this function accepts vector inputs
 % phi is the horizontal angle
 % theta is the vertical angle
@@ -18,13 +16,12 @@ k=0.7;
 x_k=sqrt(1-0.36*k);
 lambda_k=12-10*log10(1+8*k);
 
-%% Make sure from Terrys work
 Gref=zeros(length(theta),1);
 
 x1=find( 0<=x & x <x_k );
-Gref(x1)=+12*(x(x1)).^2;
+Gref(x1)=+12*x(x1).^2;
 x2=find( x_k<=x & x <4);
-Gref(x2)=+12*(x(x2)).^2+10*log10( (x(x2)).^(-1.5) + k );
+Gref(x2)=+12*x(x2).^2+10*log10(x(x2).^(-1.5) + k );
 x3=find( x >=4);
 Gref(x3)=+lambda_k-15*log10(x(x3));
 
