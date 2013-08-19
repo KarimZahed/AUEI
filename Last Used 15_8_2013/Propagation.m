@@ -1,4 +1,4 @@
-function [ L,sigma ] = Propagation( freq,dist , H1,H2, env,AboveRoof )
+function [ L ] = Propagation( freq,dist , H1,H2, env,AboveRoof )
 %for frequencies between 30MHz and 3 GHz
 %freq is in MHz
 %distances up to 100km
@@ -97,7 +97,7 @@ L_01 =32.5+20*log10(freq)+20*log10(0.1);
         end
         
         %% 
-         %L=L+sigma.*randn(length(dist),1);
+         L=L+sigma.*randn(length(dist),1);
         
     else 
 

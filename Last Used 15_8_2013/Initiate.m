@@ -25,9 +25,9 @@ Borders(:,2,6)= [Centers(6,2)+r*sqrt(3)/2, Centers(6,2), Centers(6,2)-sqrt(3)*r/
 Borders(:,1,7)= [Centers(7,1)+r/2, Centers(7,1)+r, Centers(7,1)+r/2, Centers(7,1)-r/2, Centers(7,1)-r, Centers(7,1)-r/2, Centers(7,1)+r/2];
 Borders(:,2,7)= [Centers(7,2)+r*sqrt(3)/2, Centers(7,2), Centers(7,2)-sqrt(3)*r/2, Centers(7,2)-sqrt(3)*r/2, Centers(7,2), Centers(7,2)+sqrt(3)*r/2, Centers(7,2)+r*sqrt(3)/2 ];
 
-%% Generates Base Station Locations 
+%% Generates Base Station Locations
 Base(1,1)= Centers(1,1)-r;  % Base 1 Location
-Base(1,2)= Centers(1,2)  ;  %Note that Center 1 is at r,0 not 0,0
+Base(1,2)= Centers(1,2);
 
 Base(2,1)=Centers(1,1)+r/2;
 Base(2,2)=Centers(1,2)+3*sqrt(3)*r/2;  % Base2 Location
@@ -38,21 +38,6 @@ Base(3,2)=Centers(1,2);  % Base3 Location
 Base(4,1)=Centers(1,1)+r/2;
 Base(4,2)=Centers(1,2)-3*sqrt(3)*r/2;  % Base4 Location
 
-Base(5,1)= Centers(1,1)-5*r/2;
-Base(5,2)= Centers(1,2)-3*sqrt(3)*r/2;
-
-Base(6,1)= Centers(1,1)-4*r;
-Base(6,2)= Centers(1,2);
-
-Base(7,1)= Centers(1,1)-5*r/2;
-Base(7,2)= Centers(1,2)+3*sqrt(3)*r/2;
-
-Base(8,1)= Centers(1,1)+7*r/2;
-Base(8,2)= Centers(1,2)+3*sqrt(3)*r/2;
-
-Base(9,1)= Centers(1,1)+7*r/2;
-Base(9,2)= Centers(1,2)-3*sqrt(3)*r/2;
-
-Base(1:9,3)=BS_h; %Z coordinate of Base Stations
+Base(1:4,3)=BS_h;
 end
 
