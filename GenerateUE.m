@@ -1,15 +1,16 @@
 function [ UE ] = GenerateUE(r,Centers,Base, UE_h,UE_Hexagon, Hexagons)
 
-UE=zeros(UE_Hexagon*Hexagons,12); % 4,5,6.... distance to each BS 
-
+UE=zeros(UE_Hexagon*Hexagons,3+size(Base,1)); % 4,5,6.... distance to each BS 
 
 for z=1:Hexagons % for each of the hexagons
  
  RNu=randi(UE_Hexagon-1,1,1)-1;% Generate a number between the number of UEs and 0
  RNd=randi(UE_Hexagon-3,1,1)-1; 
+ 
  if(RNd+RNu > UE_Hexagon) %if RN < number of UEs in a hexagon
  RNd=UE_Hexagon-RNu;
  end
+ 
  RNf=UE_Hexagon-RNu-RNd;
  
  Xu=zeros(RNu,1);Yu=zeros(RNu,1); 
@@ -40,18 +41,11 @@ end
 UE(( (UE_Hexagon*(z-1)+1) : ((UE_Hexagon)*(z-1)+UE_Hexagon) ),1:2)=[Xu,Yu;Xd,Yd;Xf,Yf]; %Take these points
 end   
 
-UE(:,3)=UE_h;
+UE(:,3)=UE_h; % Z coordinate
 
 % Distance between UEs and respective Base Station
-UE(:,4)=( ( UE(:,1)-Base(1,1) ).^2 +(UE(:,2)-Base(1,2)).^2 ).^(1/2); % distance to Base1
-UE(:,5)=( ( UE(:,1)-Base(2,1) ).^2 +(UE(:,2)-Base(2,2)).^2 ).^(1/2); %  Base 2
-UE(:,6)=( ( UE(:,1)-Base(3,1) ).^2 +(UE(:,2)-Base(3,2)).^2 ).^(1/2); %  Base 3
-UE(:,7)=( ( UE(:,1)-Base(4,1) ).^2 +(UE(:,2)-Base(4,2)).^2 ).^(1/2); %  Base 4
-
-UE(:,8)=( ( UE(:,1)-Base(5,1) ).^2 +(UE(:,2)-Base(5,2)).^2 ).^(1/2); %  Base 5
-UE(:,9)=( ( UE(:,1)-Base(6,1) ).^2 +(UE(:,2)-Base(6,2)).^2 ).^(1/2); %  Base 6
-UE(:,10)=( ( UE(:,1)-Base(7,1) ).^2 +(UE(:,2)-Base(7,2)).^2 ).^(1/2); %  Base 7
-UE(:,11)=( ( UE(:,1)-Base(8,1) ).^2 +(UE(:,2)-Base(8,2)).^2 ).^(1/2); %  Base 8
-UE(:,12)=( ( UE(:,1)-Base(9,1) ).^2 +(UE(:,2)-Base(9,2)).^2 ).^(1/2); %  Base 9
+for z=4:(3+size(Base,1))
+UE(:,z)=( ( UE(:,1)-Base(z,1) ).^2 +(UE(:,2)-Base(z,2)).^2 ).^(1/2); % distance to each Base Station
+end 
 
 end
