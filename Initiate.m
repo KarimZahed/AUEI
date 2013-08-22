@@ -26,6 +26,7 @@ Borders(:,1,7)= [Centers(7,1)+r/2, Centers(7,1)+r, Centers(7,1)+r/2, Centers(7,1
 Borders(:,2,7)= [Centers(7,2)+r*sqrt(3)/2, Centers(7,2), Centers(7,2)-sqrt(3)*r/2, Centers(7,2)-sqrt(3)*r/2, Centers(7,2), Centers(7,2)+sqrt(3)*r/2, Centers(7,2)+r*sqrt(3)/2 ];
 
 %% Generates Base Station Locations 
+% Do something if BS = 4, 9 , 14
 Base(1,1)= Centers(1,1)-r;  % Base 1 Location
 Base(1,2)= Centers(1,2)  ;  %Note that Center 1 is at r,0 not 0,0
 

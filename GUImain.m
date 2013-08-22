@@ -1,22 +1,46 @@
 tic
 %% GUI Input
+prompt1={'Total Number of Time Steps tmax (ms)','Enter the Frequency (MHz)',' Expected Field Strength E received by the DTT (dB uv/m)','DTT_x ','DTT y-coordinate'};
+name1='Input';
+numlines=1;
+defaultanswer1={'100','708','67','0.25','0.25'};
+answer1=inputdlg(prompt1,name1,numlines,defaultanswer1);
 
-R=1; 
-Total_Base= 9;
-UE_Hexagon=6 ;
-tow=3 ;
-Environment='Suburban';
+matdata1=cellfun(@str2num,answer1);
+tmax=matdata1(1);
+freq=matdata1(2);
+E_median=matdata1(3);
+DTT_x=matdata1(4);
+DTT_y=matdata1(5);
 
-tmax=100;
-freq=708;
-E_median=67;
-DTT_x=r/2 ;
-DTT_y=r/2;
+prompt2={'Maximum width of the Hexagon R (km)','Number of Base Stations','Number of UEs in each Hexagon','Base Station Antenna Tilt (degrees)','Environment (0=Urban, 1=Suburban, 2=Rural)'};
+name2='Layout';
+defaultanswer2={'1','9','6','3','1'};
+answer2=inputdlg(prompt2,name2,numlines,defaultanswer2);
 
-ACS= 55 ;
-ACLR= 33;
-PLxile=122 ;
-gamma=1 ;
+matdata2=cellfun(@str2num,answer2);
+R=matdata2(1);
+Total_Base=matdata2(2);
+UE_Hexagon=matdata2(3);
+tow=matdata2(4);
+if matdata2(5)==0
+    Environment='Urban';
+elseif matdata2(5)==1
+    Environment='Suburban';
+elseif matdata2(5)==2
+    Environment='Rural';
+end 
+
+prompt3={'ACS','ACLR',' PLxile according to Setting 1,2, or 3(dB)','Gamma between 0 & 1'};
+name3='Power Conditions';
+defaultanswer3={'55','33','122','1'};
+answer3=inputdlg(prompt3,name3,numlines,defaultanswer3);
+
+matdata3=cellfun(@str2num,answer3);
+ACS=matdata3(1);
+ACLR=matdata3(2);
+PLxile=matdata3(3);
+gamma=matdata3(4);
 
 %% Preliminary Calculations
 r=R/2; % r is length of hexagon's side in km
@@ -49,6 +73,7 @@ UE_BS_index= zeros(Total_UE,1);
 phi_matrix=zeros(Total_UE,Total_Base);
 theta_matrix=zeros(Total_UE,Total_Base);
 %% Plots Centers,Borders and BaseStations
+
 [Centers,Borders,Base]=Initiate(r,BS_h,Total_Base);
 
 %% DTT Field Strength
@@ -91,7 +116,7 @@ for t=1:tmax
     idx=sub2ind(size(sigma), (1:Total_UE), UE_BS_index');
     sigma_min=sigma(idx);
     
-%%Gain from DTT to UEs
+%% Angle gain here is to DTT so should be changed
  [DTT_UE_discrim , normDTT] =DTTGain(UE,DTT_xyz,DTT_station );
  Pt_UE_min=Pt_UE_min + DTT_UE_discrim; % DTT_UE_Gain is negative so it Reduces the power due to discrimination from angle with DTT
   %^42x1               ^Discrimination Gain

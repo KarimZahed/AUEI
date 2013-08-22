@@ -96,9 +96,6 @@ L_01 =32.5+20*log10(freq)+20*log10(0.1);
           sigma(d3)=3.5+(17-3.5)/(0.1-0.04)*(dist(d3)-0.04);
         end
         
-        %% 
-         %L=L+sigma.*randn(length(dist),1);
-        
     else 
 
     'not in frequency range'
