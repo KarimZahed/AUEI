@@ -28,9 +28,6 @@ Gref(x2)= -12*(x(x2)).^2 + 10*log10( (x(x2)).^(-1.5) + k );
 x3=find( x >=4);
 Gref(x3)= -lambda_k - 15*log10(x(x3));
 
-%Something wrong with size
-
-
 
 %Gain is in dBi which is the same as dB
 end

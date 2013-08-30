@@ -102,7 +102,7 @@ L_01 =32.5+20*log10(freq)+20*log10(0.1);
     
     end 
 
-
+%  L=L+sigma.*randn(size(sigma));
 
 end
 

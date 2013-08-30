@@ -22,8 +22,8 @@ elseif (mod(index,3)==2)
     
 alfa1= rand(1,1);
 alfa2= rand(1,1);
-DTT_x=Centers(1) + (alfa1+alfa2)*r/2;
-DTT_y=Centers(2) + sqrt(3)*(alfa1-alfa2)*r/2;
+DTT_x=Center(1) + (alfa1+alfa2)*r/2;
+DTT_y=Center(2) + sqrt(3)*(alfa1-alfa2)*r/2;
     
 end
 
